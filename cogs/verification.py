@@ -12,8 +12,8 @@ class VerifyButton(discord.ui.View):
         super().__init__(timeout=None)
 
     @discord.ui.button(
-        label="✅ Verificarme",
-        style=discord.ButtonStyle.success,
+        label="↩Verificate↪",
+        style=discord.ButtonStyle.primary,
         custom_id="verify_button"
     )
     async def verify(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -103,13 +103,7 @@ class Verification(commands.Cog):
         description="Envía el panel de verificación en el canal actual."
     )
     @app_commands.checks.has_permissions(administrator=True)
-    async def send_verify(
-        self,
-        interaction: discord.Interaction,
-        titulo: str = "Verificación",
-        descripcion: str = "Pulsa el botón para verificarte y acceder al servidor.",
-        color_hex: str = "2ecc71"
-    ):
+    async def send_verify(self, interaction: discord.Interaction):
         config = config_manager.get_guild_config(interaction.guild_id)
         role_id = config.get("verify_role_id")
 
@@ -120,17 +114,12 @@ class Verification(commands.Cog):
             )
             return
 
-        role = interaction.guild.get_role(int(role_id))
-        role_mention = role.mention if role else "*(rol no encontrado)*"
-
-        try:
-            color = discord.Color(int(color_hex.lstrip("#"), 16))
-        except ValueError:
-            color = discord.Color.green()
-
-        embed = discord.Embed(title=titulo, description=descripcion, color=color)
-        embed.add_field(name="🎭 Rol que recibirás", value=role_mention)
-        embed.set_footer(text=interaction.guild.name)
+        embed = discord.Embed(
+            title="Captcha Verification",
+            description="Verificate abajo para ver todos los canales 😉",
+            color=0x9B59B6
+        )
+        embed.set_footer(text="Maldito Cupido • Verification")
 
         await interaction.channel.send(embed=embed, view=VerifyButton())
         await interaction.response.send_message(
